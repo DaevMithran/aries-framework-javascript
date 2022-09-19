@@ -1,4 +1,4 @@
-import type { FileSystem } from '../../../storage/FileSystem'
+import type { FileSystem } from '../../../../storage/FileSystem'
 import type {
   default as Indy,
   CredDef,
@@ -11,16 +11,15 @@ import type {
   CredValues,
 } from 'indy-sdk'
 
-import { AgentConfig } from '../../../agent/AgentConfig'
-import { InjectionSymbols } from '../../../constants'
-import { AriesFrameworkError } from '../../../error/AriesFrameworkError'
-import { IndySdkError } from '../../../error/IndySdkError'
-import { inject, injectable } from '../../../plugins'
-import { isIndyError } from '../../../utils/indyError'
-import { IndyWallet } from '../../../wallet/IndyWallet'
-import { CheqdLedgerService } from '../../ledger/services/cheqd/CheqdLedgerService'
+import { AgentConfig } from '../../../../agent/AgentConfig'
+import { AriesFrameworkError } from '../../../../error/AriesFrameworkError'
+import { IndySdkError } from '../../../../error/IndySdkError'
+import { injectable } from '../../../../plugins'
+import { isIndyError } from '../../../../utils/indyError'
+import { IndyWallet } from '../../../../wallet/IndyWallet'
 
 import { IndyUtilitiesService } from './IndyUtilitiesService'
+import { CreateCredentialDefinitionOptions, CreateCredentialOptions, CreateSchemaOptions } from '../IssuerService'
 
 @injectable()
 export class IndyIssuerService {
@@ -29,12 +28,7 @@ export class IndyIssuerService {
   private indyUtilitiesService: IndyUtilitiesService
   private fileSystem: FileSystem
 
-  public constructor(
-    agentConfig: AgentConfig,
-    wallet: IndyWallet,
-    indyUtilitiesService: IndyUtilitiesService,
-    @inject(InjectionSymbols.GenericIndyLedgerService) private ledgerService: CheqdLedgerService
-  ) {
+  public constructor(agentConfig: AgentConfig, wallet: IndyWallet, indyUtilitiesService: IndyUtilitiesService) {
     this.indy = agentConfig.agentDependencies.indy
     this.wallet = wallet
     this.indyUtilitiesService = indyUtilitiesService
@@ -92,19 +86,9 @@ export class IndyIssuerService {
    * @param credentialDefinitionId The credential definition to create an offer for
    * @returns The created credential offer
    */
-  public async createCredentialOffer(credentialDefinitionId: CredDefId): Promise<Indy.CredOffer> {
-    const credDefResource = await this.ledgerService.getCredentialDefinitionResource(credentialDefinitionId)
-    const indyCredDefId = await this.ledgerService.indyCredentialDefinitionIdFromCheqdCredentialDefinitionId(
-      credentialDefinitionId
-    )
+  public async createCredentialOffer(credentialDefinitionId: CredDefId) {
     try {
-      const offer = await this.indy.issuerCreateCredentialOffer(this.wallet.handle, indyCredDefId)
-
-      return {
-        ...offer,
-        cred_def_id: credentialDefinitionId,
-        schema_id: credDefResource.AnonCredsCredDef.schemaId,
-      }
+      return await this.indy.issuerCreateCredentialOffer(this.wallet.handle, credentialDefinitionId)
     } catch (error) {
       throw isIndyError(error) ? new IndySdkError(error) : error
     }
@@ -122,27 +106,6 @@ export class IndyIssuerService {
     revocationRegistryId,
     tailsFilePath,
   }: CreateCredentialOptions): Promise<[Cred, CredRevocId]> {
-    const credentialDefinitionResource = await this.ledgerService.getCredentialDefinitionResource(
-      credentialRequest.cred_def_id
-    )
-    const indySchemaId = await this.ledgerService.indySchemaIdFromCheqdSchemaId(
-      credentialDefinitionResource.AnonCredsCredDef.schemaId
-    )
-    const indyCredDefId = await this.ledgerService.indyCredentialDefinitionIdFromCheqdCredentialDefinitionId(
-      credentialRequest.cred_def_id
-    )
-
-    const offer: Indy.CredOffer = {
-      ...credentialOffer,
-      cred_def_id: indyCredDefId,
-      schema_id: indySchemaId,
-    }
-
-    const request: Indy.CredReq = {
-      ...credentialRequest,
-      cred_def_id: indyCredDefId,
-    }
-
     try {
       // Indy SDK requires tailsReaderHandle. Use null if no tailsFilePath is present
       const tailsReaderHandle = tailsFilePath ? await this.indyUtilitiesService.createTailsReader(tailsFilePath) : 0
@@ -153,46 +116,16 @@ export class IndyIssuerService {
 
       const [credential, credentialRevocationId] = await this.indy.issuerCreateCredential(
         this.wallet.handle,
-        offer,
-        request,
+        credentialOffer,
+        credentialRequest,
         credentialValues,
         revocationRegistryId ?? null,
         tailsReaderHandle
       )
 
-      return [
-        {
-          ...credential,
-          cred_def_id: credentialOffer.cred_def_id,
-          schema_id: credentialOffer.schema_id,
-        },
-        credentialRevocationId,
-      ]
+      return [credential, credentialRevocationId]
     } catch (error) {
       throw isIndyError(error) ? new IndySdkError(error) : error
     }
   }
-}
-
-export interface CreateCredentialDefinitionOptions {
-  issuerDid: string
-  schema: Schema
-  tag?: string
-  signatureType?: 'CL'
-  supportRevocation?: boolean
-}
-
-export interface CreateCredentialOptions {
-  credentialOffer: CredOffer
-  credentialRequest: CredReq
-  credentialValues: CredValues
-  revocationRegistryId?: string
-  tailsFilePath?: string
-}
-
-export interface CreateSchemaOptions {
-  originDid: string
-  name: string
-  version: string
-  attributes: string[]
 }

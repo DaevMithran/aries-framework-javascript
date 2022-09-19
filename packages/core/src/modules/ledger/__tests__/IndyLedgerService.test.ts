@@ -4,7 +4,7 @@ import type { LedgerReadReplyResponse, LedgerWriteReplyResponse } from 'indy-sdk
 import { getAgentConfig, mockFunction } from '../../../../tests/helpers'
 import { CacheRepository } from '../../../cache/CacheRepository'
 import { IndyWallet } from '../../../wallet/IndyWallet'
-import { IndyIssuerService } from '../../indy/services/IndyIssuerService'
+import { IndyIssuerService } from '../../anoncreds/services/indy/IndyIssuerService'
 import { IndyLedgerService, IndyPoolService, IndyPool } from '../services/indy'
 
 jest.mock('../services/IndyPoolService')

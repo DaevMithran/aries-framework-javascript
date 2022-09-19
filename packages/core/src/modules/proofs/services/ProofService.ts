@@ -25,7 +25,6 @@ import { AckStatus } from '../../common'
 import { ConnectionService } from '../../connections'
 import { IndyCredential, CredentialRepository, IndyCredentialInfo } from '../../credentials'
 import { IndyCredentialUtils } from '../../credentials/formats/indy/IndyCredentialUtils'
-import { IndyHolderService, IndyVerifierService, IndyRevocationService } from '../../indy'
 import { GenericIndyLedgerService } from '../../ledger/models/IndyLedgerService'
 import { ProofEventTypes } from '../ProofEvents'
 import { ProofState } from '../ProofState'
@@ -51,6 +50,9 @@ import {
 } from '../models'
 import { ProofRepository } from '../repository'
 import { ProofRecord } from '../repository/ProofRecord'
+import { VerifierService } from '../../anoncreds/services/VerifierService'
+import { HolderService } from '../../anoncreds/services/HolderService'
+import { RevocationService } from '../../anoncreds/services/RevocationService'
 
 /**
  * @todo add method to check if request matches proposal. Useful to see if a request I received is the same as the proposal I sent.
@@ -64,9 +66,9 @@ export class ProofService {
   private ledgerService: GenericIndyLedgerService
   private wallet: Wallet
   private logger: Logger
-  private indyHolderService: IndyHolderService
-  private indyVerifierService: IndyVerifierService
-  private indyRevocationService: IndyRevocationService
+  private indyHolderService: HolderService
+  private indyVerifierService: VerifierService
+  private indyRevocationService: RevocationService
   private connectionService: ConnectionService
   private eventEmitter: EventEmitter
 
@@ -75,9 +77,9 @@ export class ProofService {
     @inject(InjectionSymbols.GenericIndyLedgerService) ledgerService: GenericIndyLedgerService,
     @inject(InjectionSymbols.Wallet) wallet: Wallet,
     agentConfig: AgentConfig,
-    indyHolderService: IndyHolderService,
-    indyVerifierService: IndyVerifierService,
-    indyRevocationService: IndyRevocationService,
+    @inject(InjectionSymbols.GenericHolderService) indyHolderService: HolderService,
+    @inject(InjectionSymbols.GenericVerifierService) indyVerifierService: VerifierService,
+    @inject(InjectionSymbols.GenericRevocationService) indyRevocationService: RevocationService,
     connectionService: ConnectionService,
     eventEmitter: EventEmitter,
     credentialRepository: CredentialRepository

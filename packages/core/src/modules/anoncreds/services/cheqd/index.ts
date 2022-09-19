@@ -1,0 +1,5 @@
+export * from './CheqdHolderService'
+export * from './CheqdIssuerService'
+export * from './CheqdRevocationService'
+export * from './CheqdVerifierService'
+export * from './CheqdUtilitiesService'

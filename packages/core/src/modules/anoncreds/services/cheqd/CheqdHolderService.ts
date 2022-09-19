@@ -1,27 +1,27 @@
-import type { Logger } from '../../../logger'
-import type { RequestedCredentials } from '../../proofs'
+import type { Logger } from '../../../../logger'
+import type { RequestedCredentials } from '../../../proofs'
 import type * as Indy from 'indy-sdk'
 
-import { AgentConfig } from '../../../agent/AgentConfig'
-import { InjectionSymbols } from '../../../constants'
-import { IndySdkError } from '../../../error/IndySdkError'
-import { inject, injectable } from '../../../plugins'
-import { isIndyError } from '../../../utils/indyError'
-import { IndyWallet } from '../../../wallet/IndyWallet'
-import { CheqdLedgerService } from '../../ledger'
+import { AgentConfig } from '../../../../agent/AgentConfig'
+import { InjectionSymbols } from '../../../../constants'
+import { IndySdkError } from '../../../../error/IndySdkError'
+import { inject, injectable } from '../../../../plugins'
+import { isIndyError } from '../../../../utils/indyError'
+import { IndyWallet } from '../../../../wallet/IndyWallet'
+import { CheqdLedgerService } from '../../../ledger'
 
-import { IndyRevocationService } from './IndyRevocationService'
+import { CheqdRevocationService } from './CheqdRevocationService'
 
 @injectable()
-export class IndyHolderService {
+export class CheqdHolderService {
   private indy: typeof Indy
   private logger: Logger
   private wallet: IndyWallet
-  private indyRevocationService: IndyRevocationService
+  private indyRevocationService: CheqdRevocationService
 
   public constructor(
     agentConfig: AgentConfig,
-    indyRevocationService: IndyRevocationService,
+    indyRevocationService: CheqdRevocationService,
     wallet: IndyWallet,
     @inject(InjectionSymbols.GenericIndyLedgerService) private ledgerService: CheqdLedgerService
   ) {

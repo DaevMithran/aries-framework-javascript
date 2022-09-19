@@ -1,14 +1,14 @@
 import type * as Indy from 'indy-sdk'
 
-import { AgentConfig } from '../../../agent/AgentConfig'
-import { InjectionSymbols } from '../../../constants'
-import { IndySdkError } from '../../../error'
-import { inject, injectable } from '../../../plugins'
-import { isIndyError } from '../../../utils/indyError'
-import { CheqdLedgerService } from '../../ledger'
+import { AgentConfig } from '../../../../agent/AgentConfig'
+import { InjectionSymbols } from '../../../../constants'
+import { IndySdkError } from '../../../../error'
+import { inject, injectable } from '../../../../plugins'
+import { isIndyError } from '../../../../utils/indyError'
+import { CheqdLedgerService } from '../../../ledger'
 
 @injectable()
-export class IndyVerifierService {
+export class CheqdVerifierService {
   private indy: typeof Indy
 
   public constructor(

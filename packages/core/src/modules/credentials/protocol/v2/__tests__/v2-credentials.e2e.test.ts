@@ -6,7 +6,7 @@ import { issueCredential, setupCredentialTests, waitForCredentialRecord } from '
 import testLogger from '../../../../../../tests/logger'
 import { DidCommMessageRepository } from '../../../../../storage'
 import { JsonTransformer } from '../../../../../utils'
-import { IndyHolderService } from '../../../../indy/services/IndyHolderService'
+import { IndyHolderService } from '../../../../anoncreds/services/indy/IndyHolderService'
 import { CredentialState } from '../../../models/CredentialState'
 import { CredentialExchangeRecord } from '../../../repository/CredentialExchangeRecord'
 import {

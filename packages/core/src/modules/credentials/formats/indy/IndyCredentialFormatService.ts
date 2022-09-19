@@ -33,7 +33,6 @@ import { uuid } from '../../../../utils/uuid'
 import { Wallet } from '../../../../wallet/Wallet'
 import { ConnectionService } from '../../../connections'
 import { DidResolverService, findVerificationMethodByKeyType } from '../../../dids'
-import { IndyHolderService, IndyIssuerService } from '../../../indy'
 import { GenericIndyLedgerService } from '../../../ledger/models/IndyLedgerService'
 import { CredentialProblemReportError, CredentialProblemReportReason } from '../../errors'
 import { CredentialFormatSpec } from '../../models/CredentialFormatSpec'
@@ -44,6 +43,8 @@ import { CredentialFormatService } from '../CredentialFormatService'
 
 import { IndyCredentialUtils } from './IndyCredentialUtils'
 import { IndyCredPropose } from './models/IndyCredPropose'
+import { IssuerService } from '../../../anoncreds/services/IssuerService'
+import { HolderService } from '../../../anoncreds/services/HolderService'
 
 const INDY_CRED_ABSTRACT = 'hlindy/cred-abstract@v2.0'
 const INDY_CRED_REQUEST = 'hlindy/cred-req@v2.0'
@@ -52,9 +53,9 @@ const INDY_CRED = 'hlindy/cred@v2.0'
 
 @injectable()
 export class IndyCredentialFormatService extends CredentialFormatService<IndyCredentialFormat> {
-  private indyIssuerService: IndyIssuerService
+  private indyIssuerService: IssuerService
   private indyLedgerService: GenericIndyLedgerService
-  private indyHolderService: IndyHolderService
+  private indyHolderService: HolderService
   private connectionService: ConnectionService
   private didResolver: DidResolverService
   private wallet: Wallet
@@ -63,9 +64,9 @@ export class IndyCredentialFormatService extends CredentialFormatService<IndyCre
   public constructor(
     credentialRepository: CredentialRepository,
     eventEmitter: EventEmitter,
-    indyIssuerService: IndyIssuerService,
+    @inject(InjectionSymbols.GenericIssuerService)    indyIssuerService: IssuerService,
     @inject(InjectionSymbols.GenericIndyLedgerService) indyLedgerService: GenericIndyLedgerService,
-    indyHolderService: IndyHolderService,
+    @inject(InjectionSymbols.GenericHolderService)    indyHolderService: HolderService,
     connectionService: ConnectionService,
     didResolver: DidResolverService,
     agentConfig: AgentConfig,

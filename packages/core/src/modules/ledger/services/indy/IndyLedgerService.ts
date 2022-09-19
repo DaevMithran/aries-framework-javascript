@@ -29,7 +29,7 @@ import {
 } from '../../../../utils/did'
 import { isIndyError } from '../../../../utils/indyError'
 import { IndyWallet } from '../../../../wallet/IndyWallet'
-import { IndyIssuerService } from '../../../indy/services/IndyIssuerService'
+import { IndyIssuerService } from '../../../anoncreds/services/indy/IndyIssuerService'
 import { LedgerError } from '../../error/LedgerError'
 
 import { IndyPoolService } from './IndyPoolService'

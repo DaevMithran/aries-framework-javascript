@@ -1,13 +1,13 @@
-import type { Logger } from '../../../logger'
-import type { FileSystem } from '../../../storage/FileSystem'
+import type { Logger } from '../../../../logger'
+import type { FileSystem } from '../../../../storage/FileSystem'
 import type { default as Indy, BlobReaderHandle } from 'indy-sdk'
 
-import { AgentConfig } from '../../../agent/AgentConfig'
-import { AriesFrameworkError } from '../../../error'
-import { IndySdkError } from '../../../error/IndySdkError'
-import { injectable } from '../../../plugins'
-import { isIndyError } from '../../../utils/indyError'
-import { getDirFromFilePath } from '../../../utils/path'
+import { AgentConfig } from '../../../../agent/AgentConfig'
+import { AriesFrameworkError } from '../../../../error'
+import { IndySdkError } from '../../../../error/IndySdkError'
+import { injectable } from '../../../../plugins'
+import { isIndyError } from '../../../../utils/indyError'
+import { getDirFromFilePath } from '../../../../utils/path'
 
 @injectable()
 export class IndyUtilitiesService {

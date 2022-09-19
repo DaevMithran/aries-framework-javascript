@@ -1,19 +1,19 @@
-import type { Logger } from '../../../logger'
-import type { FileSystem } from '../../../storage/FileSystem'
-import type { IndyRevocationInterval } from '../../credentials'
-import type { RequestedCredentials } from '../../proofs'
+import type { Logger } from '../../../../logger'
+import type { FileSystem } from '../../../../storage/FileSystem'
+import type { IndyRevocationInterval } from '../../../credentials'
+import type { RequestedCredentials } from '../../../proofs'
 import type { default as Indy } from 'indy-sdk'
 
-import { AgentConfig } from '../../../agent/AgentConfig'
-import { InjectionSymbols } from '../../../constants'
-import { AriesFrameworkError } from '../../../error/AriesFrameworkError'
-import { IndySdkError } from '../../../error/IndySdkError'
-import { inject, injectable } from '../../../plugins'
-import { isIndyError } from '../../../utils/indyError'
-import { IndyWallet } from '../../../wallet/IndyWallet'
-import { GenericIndyLedgerService } from '../../ledger/models/IndyLedgerService'
+import { AgentConfig } from '../../../../agent/AgentConfig'
+import { InjectionSymbols } from '../../../../constants'
+import { AriesFrameworkError } from '../../../../error/AriesFrameworkError'
+import { IndySdkError } from '../../../../error/IndySdkError'
+import { inject, injectable } from '../../../../plugins'
+import { isIndyError } from '../../../../utils/indyError'
+import { IndyWallet } from '../../../../wallet/IndyWallet'
+import { GenericIndyLedgerService } from '../../../ledger/models/IndyLedgerService'
 
-import { IndyUtilitiesService } from './IndyUtilitiesService'
+import { CheqdUtilitiesService } from './CheqdUtilitiesService'
 
 enum RequestReferentType {
   Attribute = 'attribute',
@@ -21,9 +21,9 @@ enum RequestReferentType {
   SelfAttestedAttribute = 'self-attested-attribute',
 }
 @injectable()
-export class IndyRevocationService {
+export class CheqdRevocationService {
   private indy: typeof Indy
-  private indyUtilitiesService: IndyUtilitiesService
+  private indyUtilitiesService: CheqdUtilitiesService
   private fileSystem: FileSystem
   private ledgerService: GenericIndyLedgerService
   private logger: Logger
@@ -31,7 +31,7 @@ export class IndyRevocationService {
 
   public constructor(
     agentConfig: AgentConfig,
-    indyUtilitiesService: IndyUtilitiesService,
+    indyUtilitiesService: CheqdUtilitiesService,
     @inject(InjectionSymbols.GenericIndyLedgerService) ledgerService: GenericIndyLedgerService,
     wallet: IndyWallet
   ) {
